@@ -1,11 +1,10 @@
-
 apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
 metadata:
   name: elasticsearch
   namespace: argocd
 spec:
-  version: 8.17.0
+  version: 9.4.0
   nodeSets:
     - name: hot
       count: 1
