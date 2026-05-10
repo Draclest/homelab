@@ -61,3 +61,16 @@ sealed-secrets:
     limits:
       cpu: 200m
       memory: 256Mi
+
+
+
+# ===== ECK OPERATOR =====
+eck-operator:
+  installCRDs: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 150Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
