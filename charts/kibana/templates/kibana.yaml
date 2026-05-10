@@ -1,0 +1,33 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+  namespace: {{ .Release.Namespace }}
+spec:
+  version: {{ .Values.kibana.version }}
+  count: {{ .Values.kibana.count }}
+  elasticsearchRef:
+    name: {{ .Values.kibana.elasticsearchRef }}
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: {{ .Values.kibana.tls.disabled }}
+    service:
+      spec:
+        type: {{ .Values.kibana.service.type }}
+        ports:
+          - name: http
+            port: 5601
+            targetPort: 5601
+            nodePort: {{ .Values.kibana.service.nodePort }}
+  podTemplate:
+    spec:
+      containers:
+        - name: kibana
+          resources:
+            requests:
+              cpu: {{ .Values.kibana.resources.requests.cpu }}
+              memory: {{ .Values.kibana.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.kibana.resources.limits.cpu }}
+              memory: {{ .Values.kibana.resources.limits.memory }}

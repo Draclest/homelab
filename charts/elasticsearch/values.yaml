@@ -1,0 +1,14 @@
+elasticsearch:
+  version: "9.4.0"
+  nodeSets:
+    hot:
+      count: 1
+      storage: 50Gi
+      storageClassName: local-path
+      memory: 2Gi
+      javaOpts: "-Xms1g -Xmx1g"
+      cpu:
+        requests: 500m
+        limits: "1"
+  tls:
+    selfSigned: true

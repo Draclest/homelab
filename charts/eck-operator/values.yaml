@@ -1,0 +1,20 @@
+eck-operator:
+  # CRDs déjà installées, ne pas les recréer
+  installCRDs: false
+  createClusterScopedResources: true
+
+  replicaCount: 1
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # Namespaces à surveiller (vide = tous)
+  managedNamespaces: []
+
+  webhook:
+    enabled: true

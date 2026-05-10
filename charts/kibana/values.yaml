@@ -1,0 +1,16 @@
+kibana:
+  version: "9.4.0"
+  count: 1
+  elasticsearchRef: elasticsearch
+  service:
+    type: NodePort
+    nodePort: 30056
+  tls:
+    disabled: true
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi

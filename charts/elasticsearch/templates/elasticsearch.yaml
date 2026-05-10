@@ -1,0 +1,52 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch
+  namespace: {{ .Release.Namespace }}
+spec:
+  version: {{ .Values.elasticsearch.version }}
+  nodeSets:
+    - name: hot
+      count: {{ .Values.elasticsearch.nodeSets.hot.count }}
+      config:
+        node.store.allow_mmap: false
+        node.roles:
+          - master
+          - data_hot
+          - data_content
+          - ingest
+        xpack.security.authc.api_key.enabled: true
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              resources:
+                requests:
+                  cpu: {{ .Values.elasticsearch.nodeSets.hot.cpu.requests }}
+                  memory: {{ .Values.elasticsearch.nodeSets.hot.memory }}
+                limits:
+                  cpu: {{ .Values.elasticsearch.nodeSets.hot.cpu.limits }}
+                  memory: {{ .Values.elasticsearch.nodeSets.hot.memory }}
+              env:
+                - name: ES_JAVA_OPTS
+                  value: {{ .Values.elasticsearch.nodeSets.hot.javaOpts | quote }}
+          initContainers:
+            - name: sysctl
+              securityContext:
+                privileged: true
+                runAsUser: 0
+              command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+      volumeClaimTemplates:
+        - metadata:
+            name: elasticsearch-data
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: {{ .Values.elasticsearch.nodeSets.hot.storage }}
+            storageClassName: {{ .Values.elasticsearch.nodeSets.hot.storageClassName }}
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: {{ not .Values.elasticsearch.tls.selfSigned }}
