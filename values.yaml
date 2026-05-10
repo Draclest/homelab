@@ -8,8 +8,9 @@ argocd:
   
   server:
     service:
-      type: LoadBalancer
+      type: NodePort
       port: 80
+      nodePort: 30080
     
     # PROD : sans --insecure, accès web standard
     extraArgs: []
