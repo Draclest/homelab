@@ -7,7 +7,7 @@ argocd:
       servicePortHttps: 443
       nodePortHttp: 30080
       nodePortHttps: 30443
-    
+
     extraArgs:
       - --insecure
 
@@ -49,9 +49,11 @@ argocd:
 
   dex:
     enabled: false
+
 # ===== SEALED SECRETS =====
 sealed-secrets:
   fullnameOverride: sealed-secrets-controller
+
   resources:
     requests:
       cpu: 50m
