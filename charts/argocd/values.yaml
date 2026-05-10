@@ -1,0 +1,50 @@
+argo-cd:
+  server:
+    service:
+      type: NodePort
+      servicePortHttp: 80
+      servicePortHttps: 443
+      nodePortHttp: 30080
+      nodePortHttps: 30443
+
+    extraArgs:
+      - --insecure
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 1
+        memory: 1Gi
+
+  repoServer:
+    serviceAccount:
+      create: true
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 1
+        memory: 1Gi
+
+  controller:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1
+        memory: 2Gi
+
+  configs:
+    params:
+      server.insecure: true
+
+  notifications:
+    enabled: false
+
+  dex:
+    enabled: false

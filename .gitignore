@@ -1,2 +1,7 @@
-charts/
+# Helm dependencies
+charts/*/charts/
+charts/*/Chart.lock
+*.tgz
+
+# Sealed secrets backup (NEVER commit)
 sealed-secrets-master-key-backup.yaml

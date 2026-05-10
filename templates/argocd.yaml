@@ -1,21 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: homelab
+  name: argocd
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/Draclest/homelab.git
-    targetRevision: master
-    path: .
+    repoURL: {{ .Values.spec.source.repoURL }}
+    targetRevision: {{ .Values.spec.source.targetRevision }}
+    path: charts/argocd
     helm:
       valueFiles:
         - values.yaml
   destination:
-    server: https://kubernetes.default.svc
+    server: {{ .Values.spec.destination.server }}
     namespace: argocd
   syncPolicy:
     automated:
@@ -27,5 +27,5 @@ spec:
       limit: 5
       backoff:
         duration: 5s
+        maxDuration: 3m0s
         factor: 2
-        maxDuration: 3m

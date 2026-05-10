@@ -1,0 +1,11 @@
+apiVersion: v2
+name: argocd
+description: ArgoCD for homelab GitOps
+type: application
+version: 0.1.0
+appVersion: "2.12.0"
+
+dependencies:
+  - name: argo-cd
+    version: "7.4.0"
+    repository: "https://argoproj.github.io/argo-helm"
