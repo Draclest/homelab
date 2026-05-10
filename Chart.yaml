@@ -10,3 +10,8 @@ dependencies:
     version: "7.4.0"
     repository: "https://argoproj.github.io/argo-helm"
     alias: argocd
+
+  - name: sealed-secrets
+    version: "2.17.1"
+    repository: "https://bitnami-labs.github.io/sealed-secrets"
+    alias: sealed-secrets
