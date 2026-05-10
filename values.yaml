@@ -1,29 +1,16 @@
-# ===== GLOBAL =====
-global:
-  namespace: argocd  # ← Ajoute ça
-
 # ===== ARGOCD =====
 argocd:
-  enabled: true
-  
   server:
     service:
       type: NodePort
-      port: 80
-      nodePort: 30080
+      servicePortHttp: 80
+      servicePortHttps: 443
+      nodePortHttp: 30080
+      nodePortHttps: 30443
     
-    # PROD : sans --insecure, accès web standard
-    extraArgs: []
-    
-    # Admin password : défini (ou généré)
-    adminPassword: ""  # helm génère bcrypt auto
-    
-    # Ingress : optionnel après (DNS Pi-hole)
-    ingress:
-      enabled: false
-      # hostname: argocd.homelab.local
-      # tls: false (pour l'instant)
-    
+    extraArgs:
+      - --insecure
+
     resources:
       requests:
         cpu: 250m
@@ -31,11 +18,11 @@ argocd:
       limits:
         cpu: 1
         memory: 1Gi
-  
+
   repoServer:
     serviceAccount:
       create: true
-    
+
     resources:
       requests:
         cpu: 250m
@@ -43,7 +30,7 @@ argocd:
       limits:
         cpu: 1
         memory: 1Gi
-  
+
   controller:
     resources:
       requests:
@@ -52,19 +39,13 @@ argocd:
       limits:
         cpu: 1
         memory: 2Gi
-  
-  # Persistence : important pour k3s local-path
-  persistence:
-    enabled: true
-    size: 20Gi
-    storageClassName: "local-path"
-  
-  # Repos : on ajoute après (avec Sealed Secrets)
+
   configs:
-    repositories: {}
-  
-  # À ajouter après :
+    params:
+      server.insecure: true
+
   notifications:
     enabled: false
+
   dex:
     enabled: false
