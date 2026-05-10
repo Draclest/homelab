@@ -52,8 +52,6 @@ argocd:
 # ===== SEALED SECRETS =====
 sealed-secrets:
   fullnameOverride: sealed-secrets-controller
-  namespace: kube-system
-
   resources:
     requests:
       cpu: 50m
