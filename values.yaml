@@ -1,0 +1,69 @@
+# ===== GLOBAL =====
+namespace: argocd
+environment: prod
+
+# ===== ARGOCD =====
+argocd:
+  enabled: true
+  
+  server:
+    service:
+      type: LoadBalancer
+      port: 80
+    
+    # PROD : sans --insecure, accès web standard
+    extraArgs: []
+    
+    # Admin password : défini (ou généré)
+    adminPassword: ""  # helm génère bcrypt auto
+    
+    # Ingress : optionnel après (DNS Pi-hole)
+    ingress:
+      enabled: false
+      # hostname: argocd.homelab.local
+      # tls: false (pour l'instant)
+    
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 1
+        memory: 1Gi
+  
+  repoServer:
+    serviceAccount:
+      create: true
+    
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 1
+        memory: 1Gi
+  
+  controller:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1
+        memory: 2Gi
+  
+  # Persistence : important pour k3s local-path
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClassName: "local-path"
+  
+  # Repos : on ajoute après (avec Sealed Secrets)
+  configs:
+    repositories: {}
+  
+  # À ajouter après :
+  notifications:
+    enabled: false
+  dex:
+    enabled: false
