@@ -1,6 +1,6 @@
 # ===== GLOBAL =====
-namespace: argocd
-environment: prod
+global:
+  namespace: argocd  # ← Ajoute ça
 
 # ===== ARGOCD =====
 argocd:
