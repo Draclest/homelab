@@ -1,19 +1,6 @@
 apiVersion: v2
-name: homelab
-description: NAS k3s homelab - ECK, Nextcloud, Pi-hole, ArgoCD, OTEL
+name: homelab-apps
+description: App of Apps - root ArgoCD application
 type: application
 version: 0.1.0
 appVersion: "1.0.0"
-
-dependencies:
-  - name: argo-cd
-    version: "7.4.0"
-    repository: "https://argoproj.github.io/argo-helm"
-    alias: argocd
-
-  - name: sealed-secrets
-    version: "2.17.1"
-    repository: "https://bitnami-labs.github.io/sealed-secrets"
-  - name: eck-operator
-    version: "3.4.0"
-    repository: "https://helm.elastic.co"
