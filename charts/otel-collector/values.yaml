@@ -29,12 +29,13 @@ opentelemetry-collector:
 
     processors:
       batch:
-        timeout: 5s
-        send_batch_size: 1000
+        timeout: 1s
+        send_batch_size: 512
+        send_batch_max_size: 1024
       memory_limiter:
-        check_interval: 5s
-        limit_mib: 256
-        spike_limit_mib: 64
+        check_interval: 1s
+        limit_mib: 400
+        spike_limit_mib: 100
 
     exporters:
       elasticsearch:
@@ -46,6 +47,9 @@ opentelemetry-collector:
         password: ${env:ES_PASSWORD}
         mapping:
           mode: ecs
+        num_workers: 4
+        flush:
+          bytes: 5242880
       debug:
         verbosity: basic
 
@@ -71,8 +75,8 @@ opentelemetry-collector:
 
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 200m
+      memory: 256Mi
     limits:
-      cpu: 500m
+      cpu: 1000m
       memory: 512Mi
