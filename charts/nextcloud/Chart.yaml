@@ -1,0 +1,11 @@
+apiVersion: v2
+name: nextcloud
+description: Nextcloud with MariaDB and Redis
+type: application
+version: 0.1.0
+appVersion: "32.0.0"
+
+dependencies:
+  - name: nextcloud
+    version: "6.6.10"
+    repository: "https://nextcloud.github.io/helm/"

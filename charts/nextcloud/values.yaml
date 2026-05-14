@@ -1,0 +1,104 @@
+nextcloud:
+  nextcloud:
+    host: nextcloud.draclest.ovh
+    # admin credentials - overridden by SealedSecret via existingSecret
+    existingSecret:
+      enabled: true
+      secretName: nextcloud-credentials
+      usernameKey: nextcloud-username
+      passwordKey: nextcloud-password
+      smtpUsernameKey: smtp-username
+      smtpPasswordKey: smtp-password
+
+    trustedDomains:
+      - nextcloud.draclest.ovh
+      - 192.168.1.51
+
+    defaultConfigs:
+      .htaccess: true
+      redis.config.php: true
+      apache-pretty-urls.config.php: true
+      apcu.config.php: true
+      apps.config.php: true
+      autoconfig.php: false
+      smtp.config.php: true
+
+    configs:
+      overwrite.config.php: |-
+        <?php
+        $CONFIG = array(
+          'overwrite.cli.url' => 'https://nextcloud.draclest.ovh',
+          'overwriteprotocol' => 'https',
+          'overwritehost' => 'nextcloud.draclest.ovh',
+          'trusted_proxies' => ['192.168.1.51'],
+        );
+
+    mail:
+      enabled: true
+      fromAddress: latour.geoffroy
+      domain: gmail.com
+      smtp:
+        host: smtp.gmail.com
+        secure: ssl
+        port: 587
+        authtype: LOGIN
+
+  image:
+    repository: nextcloud
+    tag: 32-apache
+    pullPolicy: IfNotPresent
+
+  ingress:
+    enabled: false
+
+  service:
+    type: NodePort
+    port: 80
+    nodePort: 30090
+
+  persistence:
+    enabled: true
+    size: 50Gi
+    # storageClass: "" # laisser vide = storageClass par défaut du cluster
+    accessMode: ReadWriteOnce
+
+  mariadb:
+    enabled: true
+    auth:
+      database: nextcloud_db
+      username: nextcloudAdmin
+      existingSecret: nextcloud-credentials
+    primary:
+      persistence:
+        enabled: true
+        size: 10Gi
+
+  redis:
+    enabled: true
+    auth:
+      enabled: false
+    master:
+      persistence:
+        enabled: false
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 5
+
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 60
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 10
