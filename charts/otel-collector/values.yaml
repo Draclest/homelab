@@ -44,6 +44,8 @@ opentelemetry-collector:
           insecure_skip_verify: true
         user: elastic
         password: ${env:ES_PASSWORD}
+        mapping:
+          mode: ecs
       debug:
         verbosity: basic
 
