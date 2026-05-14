@@ -1,4 +1,5 @@
 nextcloud:
+
   nextcloud:
     host: nextcloud.draclest.ovh
     # admin credentials - overridden by SealedSecret via existingSecret
@@ -68,7 +69,7 @@ nextcloud:
   externalDatabase:
     enabled: true
     type: mysql
-    host: 192.168.1.51
+    host: nextcloud-mariadb
     port: 3306
     user: nextcloudAdmin
     database: nextcloud_db
