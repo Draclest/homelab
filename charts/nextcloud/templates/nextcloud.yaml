@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-data
+  namespace: nextcloud
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextcloud
+  template:
+    metadata:
+      labels:
+        app: nextcloud
+    spec:
+      initContainers:
+        - name: wait-for-mariadb
+          image: mariadb:11
+          command:
+            - sh
+            - -c
+            - |
+              until mysql --host=nextcloud-mariadb --user=nextcloudAdmin --password=${MYSQL_PASSWORD} --execute="SELECT 1;" 2>/dev/null; do
+                echo "waiting for mariadb..."; sleep 3;
+              done
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-credentials
+                  key: mariadb-password
+      containers:
+        - name: nextcloud
+          image: nextcloud:33-apache
+          ports:
+            - containerPort: 80
+          env:
+            - name: MYSQL_HOST
+              value: nextcloud-mariadb
+            - name: MYSQL_DATABASE
+              value: nextcloud_db
+            - name: MYSQL_USER
+              value: nextcloudAdmin
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-credentials
+                  key: mariadb-password
+            - name: NEXTCLOUD_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-credentials
+                  key: nextcloud-username
+            - name: NEXTCLOUD_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-credentials
+                  key: nextcloud-password
+            - name: NEXTCLOUD_TRUSTED_DOMAINS
+              value: "nextcloud.draclest.ovh 192.168.1.51"
+            - name: REDIS_HOST
+              value: nextcloud-redis
+            - name: REDIS_HOST_PORT
+              value: "6379"
+          volumeMounts:
+            - name: data
+              mountPath: /var/www/html
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: nextcloud-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+spec:
+  type: NodePort
+  selector:
+    app: nextcloud
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30090

@@ -1,11 +1,6 @@
 apiVersion: v2
 name: nextcloud
-description: Nextcloud with MariaDB and Redis
+description: Nextcloud with MariaDB and Redis - plain manifests, official images only
 type: application
-version: 0.1.0
+version: 0.2.0
 appVersion: "33.0.3"
-
-dependencies:
-  - name: nextcloud
-    version: "9.1.0"
-    repository: "https://nextcloud.github.io/helm/"

@@ -11,12 +11,11 @@ spec:
       targetPort: 6379
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: nextcloud-redis
   namespace: nextcloud
 spec:
-  serviceName: nextcloud-redis
   replicas: 1
   selector:
     matchLabels:
