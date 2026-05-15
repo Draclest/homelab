@@ -54,6 +54,26 @@ nextcloud:
         port: 587
         authtype: LOGIN
 
+    # Init container custom pour attendre MariaDB (remplace l'init container bitnami)
+    extraInitContainers:
+      - name: mariadb-isalive
+        image: mariadb:11
+        command:
+          - sh
+          - -c
+          - |
+            until mysql --host=nextcloud-mariadb --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --execute="SELECT 1;"; do
+              echo "waiting for mariadb..."; sleep 2;
+            done
+        env:
+          - name: MYSQL_USER
+            value: nextcloudAdmin
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: nextcloud-credentials
+                key: mariadb-password
+
   image:
     repository: nextcloud
     tag: 33-apache
@@ -70,7 +90,6 @@ nextcloud:
   persistence:
     enabled: true
     size: 50Gi
-    # storageClass: "" # laisser vide = storageClass par défaut du cluster
     accessMode: ReadWriteOnce
 
   mariadb:
