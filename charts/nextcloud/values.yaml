@@ -17,7 +17,7 @@ nextcloud:
 
     defaultConfigs:
       .htaccess: true
-      redis.config.php: true
+      redis.config.php: false
       apache-pretty-urls.config.php: true
       apcu.config.php: true
       apps.config.php: true
@@ -32,6 +32,16 @@ nextcloud:
           'overwriteprotocol' => 'https',
           'overwritehost' => 'nextcloud.draclest.ovh',
           'trusted_proxies' => ['192.168.1.51'],
+        );
+      redis.config.php: |-
+        <?php
+        $CONFIG = array(
+          'memcache.distributed' => '\OC\Memcache\Redis',
+          'memcache.locking' => '\OC\Memcache\Redis',
+          'redis' => array(
+            'host' => 'nextcloud-redis',
+            'port' => 6379,
+          ),
         );
 
     mail:
@@ -77,12 +87,9 @@ nextcloud:
     existingSecretPasswordKey: mariadb-password
 
   redis:
-    enabled: true
-    auth:
-      enabled: false
-    master:
-      persistence:
-        enabled: false
+    enabled: false
+
+  # Redis géré par notre StatefulSet custom (redis.yaml) avec l'image officielle redis:7-alpine
 
   resources:
     requests:
