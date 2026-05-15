@@ -72,7 +72,7 @@ spec:
                   key: mariadb-password
       containers:
         - name: nextcloud
-          image: nextcloud:latest-apache
+          image: nextcloud:apache
           ports:
             - containerPort: 80
           env:
