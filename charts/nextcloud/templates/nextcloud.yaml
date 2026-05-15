@@ -32,7 +32,7 @@ spec:
             - sh
             - -c
             - |
-              until mysql --host=nextcloud-mariadb --user=nextcloudAdmin --password=${MYSQL_PASSWORD} --execute="SELECT 1;" 2>/dev/null; do
+              until mariadb --host=nextcloud-mariadb --user=nextcloudAdmin --password=${MYSQL_PASSWORD} --execute="SELECT 1;" 2>/dev/null; do
                 echo "waiting for mariadb..."; sleep 3;
               done
           env:
