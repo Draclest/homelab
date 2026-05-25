@@ -22,7 +22,7 @@ spec:
               done
       containers:
         - name: occ
-          image: nextcloud:34-apache
+          image: nextcloud:33-apache
           command:
             - /bin/sh
             - -c
