@@ -8,6 +8,7 @@ spec:
   count: {{ .Values.kibana.count }}
   elasticsearchRef:
     name: {{ .Values.kibana.elasticsearchRef }}
+    namespace: elastic
   http:
     tls:
       selfSignedCertificate:
