@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nextcloud-cron
+  namespace: nextcloud
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: cron
+              image: nextcloud:34-apache
+              command:
+                - /bin/sh
+                - -c
+                - php -f /var/www/html/cron.php
+              env:
+                - name: MYSQL_HOST
+                  value: nextcloud-mariadb
+                - name: MYSQL_DATABASE
+                  value: nextcloud_db
+                - name: MYSQL_USER
+                  value: nextcloudAdmin
+                - name: MYSQL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: nextcloud-credentials
+                      key: mariadb-password
+              volumeMounts:
+                - name: app
+                  mountPath: /var/www/html
+                - name: user-data
+                  mountPath: /var/www/html/data
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+          volumes:
+            - name: app
+              persistentVolumeClaim:
+                claimName: nextcloud-data
+            - name: user-data
+              persistentVolumeClaim:
+                claimName: nextcloud-user-data

@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nextcloud-db-indices
+  namespace: nextcloud
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-nextcloud
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              until wget -qO- http://nextcloud/status.php 2>/dev/null | grep -q '"installed":true'; do
+                echo "waiting for nextcloud..."; sleep 5;
+              done
+      containers:
+        - name: occ
+          image: nextcloud:34-apache
+          command:
+            - /bin/sh
+            - -c
+            - |
+              php /var/www/html/occ db:add-missing-indices && \
+              php /var/www/html/occ db:add-missing-columns && \
+              php /var/www/html/occ db:add-missing-primary-keys && \
+              php /var/www/html/occ maintenance:repair --include-expensive && \
+              php /var/www/html/occ config:system:set maintenance_window_start --value=1 --type=integer
+          env:
+            - name: MYSQL_HOST
+              value: nextcloud-mariadb
+            - name: MYSQL_DATABASE
+              value: nextcloud_db
+            - name: MYSQL_USER
+              value: nextcloudAdmin
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-credentials
+                  key: mariadb-password
+          volumeMounts:
+            - name: app
+              mountPath: /var/www/html
+            - name: user-data
+              mountPath: /var/www/html/data
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: app
+          persistentVolumeClaim:
+            claimName: nextcloud-data
+        - name: user-data
+          persistentVolumeClaim:
+            claimName: nextcloud-user-data

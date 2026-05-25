@@ -72,7 +72,7 @@ spec:
                   key: mariadb-password
       containers:
         - name: nextcloud
-          image: nextcloud:apache
+          image: nextcloud:34-apache
           ports:
             - containerPort: 80
           env:
@@ -99,6 +99,16 @@ spec:
                   key: nextcloud-password
             - name: NEXTCLOUD_TRUSTED_DOMAINS
               value: "nextcloud.draclest.ovh 192.168.1.51"
+            - name: OVERWRITEPROTOCOL
+              value: "https"
+            - name: OVERWRITEHOST
+              value: "nextcloud.draclest.ovh"
+            - name: OVERWRITECLIURL
+              value: "https://nextcloud.draclest.ovh"
+            - name: TRUSTED_PROXIES
+              value: "10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
+            - name: APACHE_DISABLE_REWRITE_IP
+              value: "1"
             - name: REDIS_HOST
               value: nextcloud-redis
             - name: REDIS_HOST_PORT
