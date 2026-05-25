@@ -72,6 +72,16 @@ nextcloud:
     # storageClass: "" # laisser vide = storageClass par défaut du cluster
     accessMode: ReadWriteOnce
 
+  extraVolumes:
+    - name: nas-data
+      hostPath:
+        path: /var/www/html/nextcloud/data
+        type: Directory
+
+  extraVolumeMounts:
+    - name: nas-data
+      mountPath: /var/www/html/data
+
   mariadb:
     enabled: true
     auth:
