@@ -16,7 +16,7 @@ spec:
         - values.yaml
   destination:
     server: {{ .Values.spec.destination.server }}
-    namespace: elastic
+    namespace: observability
   syncPolicy:
     automated:
       prune: true
