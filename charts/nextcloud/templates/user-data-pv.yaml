@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
   hostPath:
-    path: /var/www/html/nextcloud/data
+    path: /mnt/storage/nextcloud-k3s
     type: Directory
   claimRef:
     name: nextcloud-user-data
