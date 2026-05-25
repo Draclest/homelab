@@ -13,6 +13,9 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          securityContext:
+            runAsUser: 33
+            runAsGroup: 33
           containers:
             - name: cron
               image: nextcloud:33-apache
