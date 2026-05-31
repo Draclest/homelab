@@ -82,24 +82,6 @@ nextcloud:
     - name: nas-data
       mountPath: /var/www/html/data
 
-  extraInitContainers:
-    - name: fix-data-permissions
-      image: busybox:1.36
-      command:
-        - sh
-        - -c
-        - |
-          chown -R 33:33 /data
-          chmod 750 /data
-          if [ ! -f /data/.ncdata ]; then
-            echo "# Nextcloud data directory" > /data/.ncdata
-          fi
-      volumeMounts:
-        - name: nas-data
-          mountPath: /data
-      securityContext:
-        runAsUser: 0
-
   mariadb:
     enabled: true
     auth:
