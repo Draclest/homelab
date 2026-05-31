@@ -75,7 +75,7 @@ nextcloud:
   extraVolumes:
     - name: nas-data
       hostPath:
-        path: /var/www/html/nextcloud/data
+        path: /mnt/storage/nextcloud-k3s
         type: Directory
 
   extraVolumeMounts:
