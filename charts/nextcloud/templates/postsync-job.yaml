@@ -38,7 +38,13 @@ spec:
           volumeMounts:
             - name: nextcloud-data
               mountPath: /var/www/html
+            - name: nas-data
+              mountPath: /var/www/html/data
       volumes:
         - name: nextcloud-data
           persistentVolumeClaim:
             claimName: nextcloud-data
+        - name: nas-data
+          hostPath:
+            path: /mnt/storage/nextcloud-k3s
+            type: Directory
