@@ -1,0 +1,45 @@
+backend:
+  image:
+    repository: ghcr.io/draclest/pump-price-backend
+    tag: latest
+    pullPolicy: Always
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+frontend:
+  image:
+    repository: ghcr.io/draclest/pump-price-frontend
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: NodePort
+    nodePort: 30420
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+elasticsearch:
+  url: https://elasticsearch-es-http.observability.svc:9200
+  username: elastic
+  verifyCerts: "false"
+
+app:
+  corsAllowedOrigins: "https://pump-price.draclest.ovh"
+  rateLimitPerMinute: "60"
+  logLevel: INFO
+  ingestionSchedule: "0 11 * * *"
+  liveFeedSchedule: "*/10 * * * *"
+  osmRefreshDays: "7"
+  priceHistoryDays: "30"
+  otelEnabled: "false"
+  otelOtlpEndpoint: "http://opentelemetry-collector.observability.svc:4318"
+  otelServiceName: "prix-pompe-api"

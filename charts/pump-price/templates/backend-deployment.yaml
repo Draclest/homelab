@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pump-price-backend
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pump-price-backend
+  template:
+    metadata:
+      labels:
+        app: pump-price-backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: pump-price-secrets
+          env:
+            - name: ELASTICSEARCH_URL
+              value: {{ .Values.elasticsearch.url | quote }}
+            - name: ELASTICSEARCH_USERNAME
+              value: {{ .Values.elasticsearch.username | quote }}
+            - name: ELASTICSEARCH_VERIFY_CERTS
+              value: {{ .Values.elasticsearch.verifyCerts | quote }}
+            - name: CORS_ALLOWED_ORIGINS
+              value: {{ .Values.app.corsAllowedOrigins | quote }}
+            - name: RATE_LIMIT_PER_MINUTE
+              value: {{ .Values.app.rateLimitPerMinute | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.app.logLevel | quote }}
+            - name: INGESTION_SCHEDULE
+              value: {{ .Values.app.ingestionSchedule | quote }}
+            - name: LIVE_FEED_SCHEDULE
+              value: {{ .Values.app.liveFeedSchedule | quote }}
+            - name: OSM_REFRESH_DAYS
+              value: {{ .Values.app.osmRefreshDays | quote }}
+            - name: PRICE_HISTORY_DAYS
+              value: {{ .Values.app.priceHistoryDays | quote }}
+            - name: OTEL_ENABLED
+              value: {{ .Values.app.otelEnabled | quote }}
+            - name: OTEL_EXPORTER_TYPE
+              value: "otlp"
+            - name: OTEL_OTLP_ENDPOINT
+              value: {{ .Values.app.otelOtlpEndpoint | quote }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Values.app.otelServiceName | quote }}
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pump-price
+description: Prix à la Pompe — backend FastAPI + frontend Angular
+type: application
+version: 0.1.0
+appVersion: "latest"
